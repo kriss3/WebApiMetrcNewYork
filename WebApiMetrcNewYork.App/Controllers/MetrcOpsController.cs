@@ -9,7 +9,7 @@ public sealed class MetrcOpsController(IMetrcDeliveriesService svc) : Controller
 {
 	private readonly IMetrcDeliveriesService _svc = svc;
 
-	// GET /api/ops/metrc/deliveries/active?license=...&pageNumber=...&pageSize=...&lastModifiedStart=...&lastModifiedEnd=...
+	// GET /api/ops/metrc/deliveries/active?license=<params>
 	[HttpGet("deliveries/active")]
 	public async Task<IActionResult> GetActive(
 	[FromQuery] string license,
@@ -21,16 +21,37 @@ public sealed class MetrcOpsController(IMetrcDeliveriesService svc) : Controller
 	[FromQuery] string? lastModifiedEnd,
 	CancellationToken ct)
 	{
-		var (status, body) = await _svc.GetActiveAsync(license, pageNumber, pageSize, salesDateStart, salesDateEnd, lastModifiedStart, lastModifiedEnd, ct);
+		var (status, body) = await _svc.GetActiveAsync(
+			license,
+			pageNumber,
+			pageSize,
+			salesDateStart,
+			salesDateEnd,
+			lastModifiedStart,
+			lastModifiedEnd, 
+			ct);
 		return StatusCode(status, new { status, body });
 	}
 
-	// GET /api/ops/metrc/deliveries/{id}?license=...
+	// GET /api/ops/metrc/deliveries/{id}?license=<params>
 	[HttpGet("deliveries/{id}")]
-	public async Task<IActionResult> GetById([FromRoute] string id, [FromQuery] string? license, CancellationToken ct)
+	public async Task<IActionResult> GetById(
+		[FromRoute] string id,
+		[FromQuery] string? license,
+		CancellationToken ct)
 	{
 		var (status, body) = await _svc.GetByIdAsync(id, license, ct);
 		return StatusCode(status, new { status, body });
 	}
 
+	// POST /api/ops/metrc/deliveries?license=<params>
+	[HttpPost("deliveries")]
+	public async Task<IActionResult> PostDeliveries(
+		[FromQuery] string license,
+		[FromBody] string rawJsonArrayBody,
+		CancellationToken ct)
+	{
+		var (status, body) = await _svc.PostDeliveriesAsync(license, rawJsonArrayBody, ct);
+		return StatusCode(status, new { status, body });
+	}
 }
