@@ -1,4 +1,4 @@
-namespace WebApiMetrcNewYork.App
+namespace WebApiMetrcNewYork.App.Models
 {
     public class WeatherForecast
     {

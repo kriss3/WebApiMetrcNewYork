@@ -1,6 +1,12 @@
 @WebApiMetrcNewYork.App_HostAddress = http://localhost:5100
 
+@WebApiMetrcNewYork.App_SecureHostAddress = https://localhost:7100
+
 GET {{WebApiMetrcNewYork.App_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

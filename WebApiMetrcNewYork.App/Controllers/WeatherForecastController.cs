@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using WebApiMetrcNewYork.App.Models;
 
 namespace WebApiMetrcNewYork.App.Controllers
 {
