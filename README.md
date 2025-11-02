@@ -88,5 +88,17 @@ Request Flow: Controller → Service → HttpClient → DelegatingHandler → Me
 │  Returns response             │
 └────────────────────┘
 
+### Response
+
+Success/Failure:
+```
+{
+  "status": "success",        // "success" | "failure"
+  "httpCode": 200,            // Metrc HTTP status
+  "message": "",              // error text on failure; empty on success
+  "data": { /* Metrc JSON */ }, // object or array; null on failure
+  "receivedAt": "2025-11-01T01:23:45Z" // UTC timestamp from our API
+}
+```   
 
 
