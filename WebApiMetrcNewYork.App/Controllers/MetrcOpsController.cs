@@ -25,6 +25,12 @@ public sealed class MetrcOpsController(IMetrcDeliveriesService svc) : Controller
 		return StatusCode(status, new { status, body });
 	}
 
-
+	// GET /api/ops/metrc/deliveries/{id}?license=...
+	[HttpGet("deliveries/{id}")]
+	public async Task<IActionResult> GetById([FromRoute] string id, [FromQuery] string? license, CancellationToken ct)
+	{
+		var (status, body) = await _svc.GetByIdAsync(id, license, ct);
+		return StatusCode(status, new { status, body });
+	}
 
 }
