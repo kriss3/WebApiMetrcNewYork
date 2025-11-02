@@ -17,3 +17,18 @@ WebApiMetrcNewYork/
 ├─ Program.cs  
 └─ appsettings.json  
 
+
+---
+
+### 🔑 Notes
+
+- **Controllers** → thin, delegate all work to services.  
+- **Services** → call through the shared HTTP client; handle no auth logic.  
+- **Client** → handles authentication, URL composition, and HTTP reuse.  
+- **Models** → contain configuration models (`MetrcOptions`) and consistent API responses (`ApiEnvelope`).  
+- **User Secrets** → store sensitive keys:
+  ```bash
+  dotnet user-secrets set "Metrc:VendorApiKey" "<your vendor key>"
+  dotnet user-secrets set "Metrc:UserApiKey" "<your user key>"
+
+
