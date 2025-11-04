@@ -14,7 +14,13 @@ public sealed class MetrcHttp(IHttpClientFactory factory) : IMetrcHttp
 		return await MetrcEnvelopeFactory.FromResponseAsync(resp, ct);
 	}
 
-
+	public async Task<ApiEnvelope> PostAsync(string absoluteUrl, string jsonBody, CancellationToken ct = default)
+	{
+		var client = _factory.CreateClient("MetrcNY");
+		using var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+		using var resp = await client.PostAsync(absoluteUrl, content, ct);
+		return await MetrcEnvelopeFactory.FromResponseAsync(resp, ct);
+	}
 
 
 	//public async Task<(int Status, string Body)> GetAsync(string absoluteUrl, CancellationToken ct = default)
