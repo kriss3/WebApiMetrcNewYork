@@ -25,6 +25,10 @@ public sealed class MetrcDeliveriesService(IMetrcHttp http) : IMetrcDeliveriesSe
 			lastModifiedStart,
 			lastModifiedEnd), ct);
 
+	public Task<ApiEnvelope> GetByIdAsync(
+		string id, string? licenseNumber = null, CancellationToken ct = default)
+		=> _http.GetAsync(MetrcUrls.GetById(id, licenseNumber), ct);
+
 	//public Task<(int Status, string Body)> GetActiveAsync(
 	//	string licenseNumber,
 	//	string? pageNumber = null,
