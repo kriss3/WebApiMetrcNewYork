@@ -35,7 +35,12 @@ public sealed class MetrcOpsController(IMetrcDeliveriesService svc) : Controller
 		return StatusCode(env.HttpCode, env);
 	}
 
-
+	[HttpPost("deliveries")]
+	public async Task<IActionResult> PostDeliveries([FromQuery] string license, [FromBody] string rawJsonArrayBody, CancellationToken ct)
+	{
+		var env = await _svc.PostDeliveriesAsync(license, rawJsonArrayBody, ct);
+		return StatusCode(env.HttpCode, env);
+	}
 
 
 	// GET /api/ops/metrc/deliveries/active?license=<params>
