@@ -9,4 +9,14 @@ Accept: application/json
 GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/weatherforecast/
 Accept: application/json
 
+### Metrc NY — switch base here
+@baseUrl = https://<mock-subdomain>.mock.pstmn.io
+@license = 123-ABC
+# Optional: Use a BASIC token to mirror prod shape (mock won’t enforce it)
+@basic = {{BASIC_TOKEN_PLACEHOLDER}}
+
 ###
+# GET Active Deliveries
+GET {{baseUrl}}/sales/v2/deliveries/active?licenseNumber={{license}}&pageNumber=1&pageSize=10
+Authorization: Basic {{basic}}
+Accept: application/json
