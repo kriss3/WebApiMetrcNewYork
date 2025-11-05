@@ -26,8 +26,12 @@ public sealed class MetrcDeliveriesService(IMetrcHttp http) : IMetrcDeliveriesSe
 			lastModifiedEnd), ct);
 
 	public Task<ApiEnvelope> GetByIdAsync(
-		string id, string? licenseNumber = null, CancellationToken ct = default)
-		=> _http.GetAsync(MetrcUrls.GetById(id, licenseNumber), ct);
+		string id, string? licenseNumber = null, CancellationToken ct = default) => 
+		_http.GetAsync(MetrcUrls.GetById(id, licenseNumber), ct);
+
+	public Task<ApiEnvelope> PostDeliveriesAsync(
+		string licenseNumber, string rawJsonArrayBody, CancellationToken ct = default) => 
+		_http.PostAsync(MetrcUrls.PostDeliveries(licenseNumber), rawJsonArrayBody, ct);
 
 	//public Task<(int Status, string Body)> GetActiveAsync(
 	//	string licenseNumber,
