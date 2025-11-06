@@ -20,3 +20,10 @@ Accept: application/json
 GET {{baseUrl}}/sales/v2/deliveries/active?licenseNumber={{license}}&pageNumber=1&pageSize=10
 Authorization: Basic {{basic}}
 Accept: application/json
+
+###
+# GET Delivery By Id
+@id = 1
+GET {{baseUrl}}/sales/v2/deliveries/{{id}}?licenseNumber={{license}}
+Authorization: Basic {{basic}}
+Accept: application/json
