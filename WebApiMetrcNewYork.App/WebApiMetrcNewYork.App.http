@@ -34,3 +34,19 @@ POST {{baseUrl}}/sales/v2/deliveries?licenseNumber={{license}}
 Authorization: Basic {{basic}}
 Content-Type: application/json
 Accept: application/json
+
+[
+  {
+    "SalesDateTime": "2025-10-31T12:00:00",
+    "SalesCustomerType": "Consumer",
+    "ConsumerId": "ABC123",
+    "Transactions": [
+      {
+        "PackageLabel": "NYTAG0000000000000000001",
+        "UnitOfMeasure": "Each",
+        "Quantity": 1,
+        "TotalPrice": 42.0
+      }
+    ]
+  }
+]
