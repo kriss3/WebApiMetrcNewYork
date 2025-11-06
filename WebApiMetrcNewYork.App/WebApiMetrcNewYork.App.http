@@ -27,3 +27,10 @@ Accept: application/json
 GET {{baseUrl}}/sales/v2/deliveries/{{id}}?licenseNumber={{license}}
 Authorization: Basic {{basic}}
 Accept: application/json
+
+###
+# POST Deliveries (one delivery)
+POST {{baseUrl}}/sales/v2/deliveries?licenseNumber={{license}}
+Authorization: Basic {{basic}}
+Content-Type: application/json
+Accept: application/json
