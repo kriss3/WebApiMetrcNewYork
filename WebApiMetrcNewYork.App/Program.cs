@@ -11,8 +11,13 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder();
 
-		builder.Services.Configure<MetrcOptions>(builder.Configuration.GetSection("Metrc"));
+		builder.Services.Configure<MetrcOptions>(
+            builder.Configuration.GetSection(MetrcOptions.SectionName));
 		builder.Services.AddTransient<MetrcAuthHandler>();
+
+		var allowedOrigins = builder.Configuration
+            .GetSection("Cors:AllowedOrigins").Get<string[]>()
+            	?? ["http://localhost:3000", "https://localhost:3000"];
 
 
 		// Named client; BaseAddress is optional since I have absolute URLs.
