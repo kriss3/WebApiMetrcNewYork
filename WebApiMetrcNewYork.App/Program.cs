@@ -1,4 +1,6 @@
 
+using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 using WebApiMetrcNewYork.App.Client;
 using WebApiMetrcNewYork.App.Models;
 using WebApiMetrcNewYork.App.Services;
@@ -25,15 +27,25 @@ public class Program
             .AllowAnyMethod()
             .AllowCredentials()));
 
+		builder.Services.AddTransient<MetrcAuthHandler>();
+
 
 		// Named client; BaseAddress is optional since I have absolute URLs.
-		builder.Services.AddHttpClient("MetrcNY", (sp, http) =>
+		builder.Services.AddHttpClient("MetrcNY", (sp, http) => 
 		{
-			http.DefaultRequestHeaders.Accept.ParseAdd("application/json");
-		}).AddHttpMessageHandler<MetrcAuthHandler>();
+			var opts = sp.GetRequiredService<IOptions<MetrcOptions>>().Value;
 
+			http.BaseAddress = new Uri(opts.BaseUrl);
+			http.DefaultRequestHeaders.Clear();
+			http.DefaultRequestHeaders.Accept.Add(
+				new MediaTypeWithQualityHeaderValue("application/json"));
+		}).AddHttpMessageHandler<MetrcAuthHandler>(); // attaches auth headers dynamically
+
+		//builder.Services.AddScoped<IMetrcDeliveriesService, MetrcDeliveriesService>();
+		// 4) DI: client abstraction + services
 		builder.Services.AddScoped<IMetrcHttp, MetrcHttp>();
-		builder.Services.AddScoped<IMetrcDeliveriesService, MetrcDeliveriesService>();
+		builder.Services.AddScoped<IMetrcPackagesService, MetrcPackagesService>();
+		builder.Services.AddScoped<IMetrcDeliveriesSandboxService, MetrcDeliveriesSandboxService>();
 
 		builder.Services.AddControllers();
         builder.Services.AddOpenApi();
@@ -50,7 +62,8 @@ public class Program
 
         app.UseAuthorization();
 
-        app.MapControllers();
+		app.UseCors("Frontend");
+		app.MapControllers();
 
         app.Run();
     }
