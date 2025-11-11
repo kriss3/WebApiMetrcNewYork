@@ -31,15 +31,15 @@ public class Program
 
 
 		// Named client; BaseAddress is optional since I have absolute URLs.
-		builder.Services.AddHttpClient("MetrcNY", (sp, http) => 
+		builder.Services.AddHttpClient("MetrcNY", (sp, http) =>
 		{
 			var opts = sp.GetRequiredService<IOptions<MetrcOptions>>().Value;
-
 			http.BaseAddress = new Uri(opts.BaseUrl);
-			http.DefaultRequestHeaders.Clear();
-			http.DefaultRequestHeaders.Accept.Add(
-				new MediaTypeWithQualityHeaderValue("application/json"));
-		}).AddHttpMessageHandler<MetrcAuthHandler>(); // attaches auth headers dynamically
+
+			// Accept header is already set by MetrcAuthHandler in your code.
+			// If you ever move it out of the handler, uncomment this:
+			// http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+		}).AddHttpMessageHandler<MetrcAuthHandler>();
 
 		//builder.Services.AddScoped<IMetrcDeliveriesService, MetrcDeliveriesService>();
 		// 4) DI: client abstraction + services

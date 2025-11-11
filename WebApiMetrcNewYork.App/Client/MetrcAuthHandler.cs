@@ -9,9 +9,12 @@ public sealed class MetrcAuthHandler(IOptions<MetrcOptions> opts) : DelegatingHa
 {
 	private readonly MetrcOptions _opts = opts.Value;
 
-	protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
+	protected override Task<HttpResponseMessage> SendAsync(
+		HttpRequestMessage request, 
+		CancellationToken ct)
 	{
-		var token = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_opts.VendorApiKey}:{_opts.UserApiKey}"));
+		var token = Convert.ToBase64String(
+			Encoding.ASCII.GetBytes($"{_opts.VendorApiKey}:{_opts.UserApiKey}"));
 		request.Headers.Authorization = new AuthenticationHeaderValue("Basic", token);
 		request.Headers.Accept.ParseAdd("application/json");
 		
