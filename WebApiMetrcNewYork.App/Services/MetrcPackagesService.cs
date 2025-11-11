@@ -24,4 +24,12 @@ public sealed class MetrcPackagesService(IMetrcHttp http, IOptions<MetrcOptions>
 		var resp = await _http.GetAsync(url, ct);
 		return (resp.StatusCode, await resp.Content.ReadAsStringAsync(ct));
 	}
+
+	public async Task<(HttpStatusCode status, string json)> GetByLabelAsync(string label, CancellationToken ct)
+	{
+		var qs = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
+		var url = $"/packages/v2/{HttpUtility.UrlEncode(label)}?{qs}";
+		var resp = await _http.GetAsync(url, ct);
+		return (resp.StatusCode, await resp.Content.ReadAsStringAsync(ct));
+	}
 }
