@@ -1,8 +1,11 @@
 ﻿namespace WebApiMetrcNewYork.App.Models;
 
-public class MetrcOptions
+public sealed class MetrcOptions
 {
-	public string BaseUrl { get; init; } = "https://api-ny.metrc.com";
-	public required string VendorApiKey { get; init; }
-	public required string UserApiKey { get; init; }
+	public const string SectionName = "MetrcSandbox";
+
+	public string BaseUrl { get; init; } = "https://sandbox-api-ny.metrc.com/";
+	public string VendorApiKey { get; init; } = default!;
+	public string UserApiKey { get; init; } = default!;
+	public string LicenseNumber { get; init; } = default!;
 }
