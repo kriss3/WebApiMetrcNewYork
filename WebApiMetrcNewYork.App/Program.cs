@@ -19,6 +19,12 @@ public class Program
             .GetSection("Cors:AllowedOrigins").Get<string[]>()
             	?? ["http://localhost:3000", "https://localhost:3000"];
 
+		builder.Services.AddCors(o => o.AddPolicy("Frontend", p => 
+        p	.WithOrigins(allowedOrigins)
+        	.AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()));
+
 
 		// Named client; BaseAddress is optional since I have absolute URLs.
 		builder.Services.AddHttpClient("MetrcNY", (sp, http) =>
