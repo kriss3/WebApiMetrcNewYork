@@ -34,7 +34,21 @@ public sealed class MetrcNyController(
 		return StatusCode(env.HttpCode, env);
 	}
 
+	// ---------------- Deliveries (Sandbox) ----------------
 
+	// GET /api/metrcny/deliveries/active
+	[HttpGet("deliveries/active")]
+	public async Task<IActionResult> GetActiveDeliveries(CancellationToken ct)
+	{
+		ApiEnvelope env = await _deliveriesSandbox.GetActiveAsync(ct);
+		return StatusCode(env.HttpCode, env);
+	}
 
-
+	// POST /api/metrcny/deliveries
+	[HttpPost("deliveries")]
+	public async Task<IActionResult> CreateDelivery([FromBody] object payload, CancellationToken ct)
+	{
+		ApiEnvelope env = await _deliveriesSandbox.CreateAsync(payload, ct);
+		return StatusCode(env.HttpCode, env);
+	}
 }
