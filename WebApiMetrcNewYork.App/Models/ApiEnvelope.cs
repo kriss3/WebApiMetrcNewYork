@@ -26,23 +26,46 @@ public static class MetrcEnvelopeFactory
 		try
 		{
 			using var doc = JsonDocument.Parse(string.IsNullOrWhiteSpace(text) ? "{}" : text);
-			var root = doc.RootElement.Clone();
+			var root = doc.RootElement;
 
 			if (resp.IsSuccessStatusCode)
-				return ApiEnvelope.Success(code, root);
+			{
+				// ✅ On success: flatten Metrc's wrapper so ApiEnvelope.Data == content of "Data" (if present)
+				var payload = ExtractMetrcPayload(root).Clone(); // clone to survive 'doc' disposal
+				return ApiEnvelope.Success(code, payload);
+			}
 
-			// Best-effort error message extraction
+			// ❌ On failure: keep current best-effort message extraction; Data = null
 			var msg = TryExtractErrorMessage(root) ?? resp.ReasonPhrase ?? "Request failed";
 			return ApiEnvelope.Failure(code, msg);
 		}
 		catch
 		{
-			// Extremely unlikely since Metrc returns JSON, but be defensive
+			// Defensive fallback if body isn't valid JSON
 			var msg = resp.IsSuccessStatusCode ? "" : (resp.ReasonPhrase ?? "Request failed");
 			return resp.IsSuccessStatusCode
 				? ApiEnvelope.Success(code, JsonDocument.Parse("{}").RootElement.Clone())
 				: ApiEnvelope.Failure(code, msg);
 		}
+	}
+
+	// --- helpers ---
+
+	// Returns the content you actually want to expose as Data
+	private static JsonElement ExtractMetrcPayload(JsonElement root)
+	{
+		// Typical Metrc success shape: { "Data": [...], "Meta": { ... } }
+		if (root.ValueKind == JsonValueKind.Object)
+		{
+			// Prefer "Data" (Metrc), fall back to "data" if ever lower-cased
+			if (root.TryGetProperty("Data", out var dataProp))
+				return dataProp;
+			if (root.TryGetProperty("data", out var dataPropLower))
+				return dataPropLower;
+		}
+
+		// Some endpoints already return an array or object directly
+		return root;
 	}
 
 	private static string? TryExtractErrorMessage(JsonElement root)
@@ -51,11 +74,16 @@ public static class MetrcEnvelopeFactory
 		{
 			if (root.TryGetProperty("Message", out var m) && m.ValueKind == JsonValueKind.String) return m.GetString();
 			if (root.TryGetProperty("message", out var mm) && mm.ValueKind == JsonValueKind.String) return mm.GetString();
-			if (root.TryGetProperty("Errors", out var errs) && errs.ValueKind == JsonValueKind.Array && errs.GetArrayLength() > 0)
+
+			// Common Metrc error shape: { "Errors": [ "...", { "Message": "..." }, ... ] }
+			if (root.TryGetProperty("Errors", out var errs) &&
+				errs.ValueKind == JsonValueKind.Array && errs.GetArrayLength() > 0)
 			{
 				var first = errs[0];
 				if (first.ValueKind == JsonValueKind.String) return first.GetString();
-				if (first.ValueKind == JsonValueKind.Object && first.TryGetProperty("Message", out var em) && em.ValueKind == JsonValueKind.String)
+				if (first.ValueKind == JsonValueKind.Object &&
+					first.TryGetProperty("Message", out var em) &&
+					em.ValueKind == JsonValueKind.String)
 					return em.GetString();
 			}
 		}

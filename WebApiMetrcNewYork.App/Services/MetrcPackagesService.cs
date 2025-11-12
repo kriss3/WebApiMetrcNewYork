@@ -21,11 +21,15 @@ public sealed class MetrcPackagesService(IMetrcHttp http, IOptions<MetrcOptions>
 		var qs = HttpUtility.ParseQueryString(string.Empty);
 		qs["licenseNumber"] = _opts.LicenseNumber;
 
-		// Use round-trippable ISO 8601 if provided
+		// Send only the date portion (yyyy-MM-dd)
 		if (lastModifiedStart.HasValue)
-			qs["lastModifiedStart"] = lastModifiedStart.Value.UtcDateTime.ToString("o", CultureInfo.InvariantCulture);
+			qs["lastModifiedStart"] = lastModifiedStart.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
 		if (lastModifiedEnd.HasValue)
-			qs["lastModifiedEnd"] = lastModifiedEnd.Value.UtcDateTime.ToString("o", CultureInfo.InvariantCulture);
+			qs["lastModifiedEnd"] = lastModifiedEnd.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+		qs["pageNumber"] = "1";
+		qs["pageSize"] = "20";
 
 		// Relative URL is fine because HttpClient BaseAddress is set
 		var url = $"/packages/v2/active?{qs}";
