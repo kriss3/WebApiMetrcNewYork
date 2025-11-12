@@ -19,26 +19,19 @@ public sealed class MetrcDeliveriesSandboxService(
 	private readonly IMetrcHttp _http = http;
 	private readonly MetrcOptions _opts = opts.Value;
 
-	public async Task<(HttpStatusCode status, string json)> GetActiveAsync(CancellationToken ct)
+	public Task<ApiEnvelope> GetActiveAsync(CancellationToken ct)
 	{
 		var query = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
 		var url = $"/sales/v2/deliveries/active?{query}";
-
-		var resp = await _http.GetAsync(url, ct);
-		var json = await resp.Content.ReadAsStringAsync(ct);
-		return (resp.StatusCode, json);
+		return _http.GetAsync(url, ct);
 	}
 
-	public async Task<(HttpStatusCode status, string json)> CreateAsync(object payload, CancellationToken ct)
+	public Task<ApiEnvelope> CreateAsync(object payload, CancellationToken ct)
 	{
 		var query = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
 		var url = $"/sales/v2/deliveries?{query}";
 
 		var jsonBody = System.Text.Json.JsonSerializer.Serialize(payload);
-		using var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-
-		var resp = await _http.PostAsync(url, content, ct);
-		var json = await resp.Content.ReadAsStringAsync(ct);
-		return (resp.StatusCode, json);
+		return _http.PostAsync(url, jsonBody, ct);
 	}
 }
