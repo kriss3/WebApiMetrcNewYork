@@ -14,16 +14,15 @@ public class Program
         var builder = WebApplication.CreateBuilder();
 
 		builder.Services.Configure<MetrcOptions>(
-            builder.Configuration.GetSection(MetrcOptions.SectionName));
-		builder.Services.AddTransient<MetrcAuthHandler>();
+			builder.Configuration.GetSection(MetrcOptions.SectionName)); 
 
 		var allowedOrigins = builder.Configuration
-            .GetSection("Cors:AllowedOrigins").Get<string[]>()
-            	?? ["http://localhost:3000", "https://localhost:3000"];
+			.GetSection("Cors:AllowedOrigins").Get<string[]>()
+			?? ["http://localhost:3000", "https://localhost:3000"];
 
 		builder.Services.AddCors(o => o.AddPolicy("Frontend", p => 
-        p	.WithOrigins(allowedOrigins)
-        	.AllowAnyHeader()
+			p.WithOrigins(allowedOrigins)
+			.AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()));
 
@@ -35,10 +34,7 @@ public class Program
 		{
 			var opts = sp.GetRequiredService<IOptions<MetrcOptions>>().Value;
 			http.BaseAddress = new Uri(opts.BaseUrl);
-
-			// Accept header is already set by MetrcAuthHandler in your code.
-			// If you ever move it out of the handler, uncomment this:
-			// http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}).AddHttpMessageHandler<MetrcAuthHandler>();
 
 		//builder.Services.AddScoped<IMetrcDeliveriesService, MetrcDeliveriesService>();
