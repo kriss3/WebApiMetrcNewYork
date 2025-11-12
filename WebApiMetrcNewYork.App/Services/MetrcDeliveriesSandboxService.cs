@@ -12,16 +12,12 @@ namespace WebApiMetrcNewYork.App.Services;
 /// Makes outbound calls to Metrc Sandbox for Deliveries endpoints.
 /// Uses the named HttpClient "MetrcNY" configured in Program.cs.
 /// </summary>
-public sealed class MetrcDeliveriesSandboxService : IMetrcDeliveriesSandboxService
+public sealed class MetrcDeliveriesSandboxService(
+	IMetrcHttp http, 
+	IOptions<MetrcOptions> opts) : IMetrcDeliveriesSandboxService
 {
-	private readonly IMetrcHttp _http;
-	private readonly MetrcOptions _opts;
-
-	public MetrcDeliveriesSandboxService(IMetrcHttp http, IOptions<MetrcOptions> opts)
-	{
-		_http = http;
-		_opts = opts.Value;
-	}
+	private readonly IMetrcHttp _http = http;
+	private readonly MetrcOptions _opts = opts.Value;
 
 	public async Task<(HttpStatusCode status, string json)> GetActiveAsync(CancellationToken ct)
 	{

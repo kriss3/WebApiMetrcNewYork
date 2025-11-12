@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using System.Globalization;
 using System.Net;
 using System.Web;
 using WebApiMetrcNewYork.App.Client;
@@ -12,24 +13,29 @@ public sealed class MetrcPackagesService(IMetrcHttp http, IOptions<MetrcOptions>
 	private readonly IMetrcHttp _http = http;
 	private readonly MetrcOptions _opts = opts.Value;
 
-	public async Task<(HttpStatusCode status, string json)> GetActiveAsync(
-		DateTimeOffset? lastModifiedStart, DateTimeOffset? lastModifiedEnd, CancellationToken ct)
+	public Task<ApiEnvelope> GetActiveAsync(
+		DateTimeOffset? lastModifiedStart,
+		DateTimeOffset? lastModifiedEnd,
+		CancellationToken ct)
 	{
 		var qs = HttpUtility.ParseQueryString(string.Empty);
 		qs["licenseNumber"] = _opts.LicenseNumber;
-		if (lastModifiedStart.HasValue) qs["lastModifiedStart"] = lastModifiedStart.Value.UtcDateTime.ToString("o");
-		if (lastModifiedEnd.HasValue) qs["lastModifiedEnd"] = lastModifiedEnd.Value.UtcDateTime.ToString("o");
 
+		// Use round-trippable ISO 8601 if provided
+		if (lastModifiedStart.HasValue)
+			qs["lastModifiedStart"] = lastModifiedStart.Value.UtcDateTime.ToString("o", CultureInfo.InvariantCulture);
+		if (lastModifiedEnd.HasValue)
+			qs["lastModifiedEnd"] = lastModifiedEnd.Value.UtcDateTime.ToString("o", CultureInfo.InvariantCulture);
+
+		// Relative URL is fine because HttpClient BaseAddress is set
 		var url = $"/packages/v2/active?{qs}";
-		var resp = await _http.GetAsync(url, ct);
-		return (resp.StatusCode, await resp.Content.ReadAsStringAsync(ct));
+		return _http.GetAsync(url, ct);
 	}
 
-	public async Task<(HttpStatusCode status, string json)> GetByLabelAsync(string label, CancellationToken ct)
+	public Task<ApiEnvelope> GetByLabelAsync(string label, CancellationToken ct)
 	{
 		var qs = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
 		var url = $"/packages/v2/{HttpUtility.UrlEncode(label)}?{qs}";
-		var resp = await _http.GetAsync(url, ct);
-		return (resp.StatusCode, await resp.Content.ReadAsStringAsync(ct));
+		return _http.GetAsync(url, ct);
 	}
 }

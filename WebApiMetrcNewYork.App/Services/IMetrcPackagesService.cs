@@ -1,11 +1,14 @@
 ﻿using System.Net;
+using WebApiMetrcNewYork.App.Models;
 
 namespace WebApiMetrcNewYork.App.Services;
 
 public interface IMetrcPackagesService
 {
-	Task<(HttpStatusCode status, string json)> GetActiveAsync(
-		DateTimeOffset? lastModifiedStart, DateTimeOffset? lastModifiedEnd, CancellationToken ct);
+	Task<ApiEnvelope> GetActiveAsync(
+		DateTimeOffset? lastModifiedStart,
+		DateTimeOffset? lastModifiedEnd,
+		CancellationToken ct);
 
-	Task<(HttpStatusCode status, string json)> GetByLabelAsync(string label, CancellationToken ct);
+	Task<ApiEnvelope> GetByLabelAsync(string label, CancellationToken ct);
 }
