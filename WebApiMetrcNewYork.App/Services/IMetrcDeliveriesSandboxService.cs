@@ -6,8 +6,8 @@ namespace WebApiMetrcNewYork.App.Services;
 /// Metrc sandbox delivery operations (GET active deliveries, POST new delivery).
 /// Thin proxy layer over Metrc sandbox API, returning ApiEnvelope for consistency.
 /// </summary>
-public interface IMetrcDeliveriesSandboxService
+public interface IMetrcPackagesService
 {
-	Task<ApiEnvelope> GetActiveAsync(CancellationToken ct);
-	Task<ApiEnvelope> CreateAsync(object payload, CancellationToken ct);
+	Task<ApiEnvelope> GetActiveAsync(PackagesActiveQuery q, CancellationToken ct);
+	Task<ApiEnvelope> GetByLabelAsync(string label, CancellationToken ct);
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Net;
 using System.Web;
@@ -13,26 +14,22 @@ public sealed class MetrcPackagesService(IMetrcHttp http, IOptions<MetrcOptions>
 	private readonly IMetrcHttp _http = http;
 	private readonly MetrcOptions _opts = opts.Value;
 
-	public Task<ApiEnvelope> GetActiveAsync(
-		DateTimeOffset? lastModifiedStart,
-		DateTimeOffset? lastModifiedEnd,
-		CancellationToken ct)
+	public Task<ApiEnvelope> GetActiveAsync(PackagesActiveQuery q, CancellationToken ct)
 	{
-		var qs = HttpUtility.ParseQueryString(string.Empty);
-		qs["licenseNumber"] = _opts.LicenseNumber;
+		var dict = new Dictionary<string, string?>
+		{
+			["licenseNumber"] = _opts.LicenseNumber
+		};
 
-		// Send only the date portion (yyyy-MM-dd)
-		if (lastModifiedStart.HasValue)
-			qs["lastModifiedStart"] = lastModifiedStart.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+		if (q.LastModifiedStartDate is { } s)
+			dict["lastModifiedStart"] = s.ToString("yyyy-MM-dd");
+		if (q.LastModifiedEndDate is { } e)
+			dict["lastModifiedEnd"] = e.ToString("yyyy-MM-dd");
 
-		if (lastModifiedEnd.HasValue)
-			qs["lastModifiedEnd"] = lastModifiedEnd.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+		if (q.PageNumber is { } p) dict["pageNumber"] = p.ToString();
+		if (q.PageSize is { } z) dict["pageSize"] = z.ToString();
 
-		qs["pageNumber"] = "1";
-		qs["pageSize"] = "20";
-
-		// Relative URL is fine because HttpClient BaseAddress is set
-		var url = $"/packages/v2/active?{qs}";
+		var url = QueryHelpers.AddQueryString("/packages/v2/active", dict);
 		return _http.GetAsync(url, ct);
 	}
 
