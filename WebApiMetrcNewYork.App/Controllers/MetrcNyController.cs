@@ -17,12 +17,9 @@ public sealed class MetrcNyController(
 
 	// GET /api/metrcny/packages/active?lastModifiedStart=...&lastModifiedEnd=...
 	[HttpGet("packages/active")]
-	public async Task<IActionResult> GetActivePackages(
-		[FromQuery] DateTimeOffset? lastModifiedStart,
-		[FromQuery] DateTimeOffset? lastModifiedEnd,
-		CancellationToken ct)
+	public async Task<IActionResult> GetActivePackages([FromQuery] PackagesActiveQuery q, CancellationToken ct)
 	{
-		ApiEnvelope env = await _packages.GetActiveAsync(lastModifiedStart, lastModifiedEnd, ct);
+		var env = await _packages.GetActiveAsync(q, ct);
 		return StatusCode(env.HttpCode, env);
 	}
 
