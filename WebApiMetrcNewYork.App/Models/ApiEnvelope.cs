@@ -3,17 +3,20 @@
 namespace WebApiMetrcNewYork.App.Models;
 
 public sealed record ApiEnvelope(
-	string Status,           // this would be either: "success" | "failure"
+	string Status,            // "success" | "failure"
 	int HttpCode,
 	string Message,
 	JsonElement? Data,
-	DateTimeOffset ReceivedAtUtc)
+	DateTimeOffset ReceivedAtUtc,
+	JsonElement? Meta,        // raw Meta (if present)
+	PaginationInfo? Pagination // parsed paging info (if present)
+)
 {
-	public static ApiEnvelope Success(int httpCode, JsonElement data) =>
-		new("success", httpCode, "", data, DateTimeOffset.UtcNow);
+	public static ApiEnvelope Success(int httpCode, JsonElement data, JsonElement? meta, PaginationInfo? pagination) =>
+		new("success", httpCode, "", data, DateTimeOffset.UtcNow, meta, pagination);
 
 	public static ApiEnvelope Failure(int httpCode, string message) =>
-		new("failure", httpCode, message ?? "", null, DateTimeOffset.UtcNow);
+		new("failure", httpCode, message ?? "", null, DateTimeOffset.UtcNow, null, null);
 }
 
 public static class MetrcEnvelopeFactory
@@ -30,42 +33,76 @@ public static class MetrcEnvelopeFactory
 
 			if (resp.IsSuccessStatusCode)
 			{
-				// ✅ On success: flatten Metrc's wrapper so ApiEnvelope.Data == content of "Data" (if present)
-				var payload = ExtractMetrcPayload(root).Clone(); // clone to survive 'doc' disposal
-				return ApiEnvelope.Success(code, payload);
+				var (payload, metaNode) = ExtractPayloadAndMeta(root);
+				var pagination = ParsePagination(root, metaNode);
+
+				// clone elements because 'doc' will be disposed
+				var payloadCloned = payload.Clone();
+				JsonElement? metaCloned = metaNode.HasValue ? metaNode.Value.Clone() : (JsonElement?)null;
+
+				return ApiEnvelope.Success(code, payloadCloned, metaCloned, pagination);
 			}
 
-			// ❌ On failure: keep current best-effort message extraction; Data = null
 			var msg = TryExtractErrorMessage(root) ?? resp.ReasonPhrase ?? "Request failed";
 			return ApiEnvelope.Failure(code, msg);
 		}
 		catch
 		{
-			// Defensive fallback if body isn't valid JSON
 			var msg = resp.IsSuccessStatusCode ? "" : (resp.ReasonPhrase ?? "Request failed");
 			return resp.IsSuccessStatusCode
-				? ApiEnvelope.Success(code, JsonDocument.Parse("{}").RootElement.Clone())
+				? ApiEnvelope.Success(code, JsonDocument.Parse("{}").RootElement.Clone(), null, null)
 				: ApiEnvelope.Failure(code, msg);
 		}
 	}
 
-	// --- helpers ---
-
-	// Returns the content you actually want to expose as Data
-	private static JsonElement ExtractMetrcPayload(JsonElement root)
+	private static (JsonElement payload, JsonElement? meta) ExtractPayloadAndMeta(JsonElement root)
 	{
-		// Typical Metrc success shape: { "Data": [...], "Meta": { ... } }
+		JsonElement? meta = null;
+
 		if (root.ValueKind == JsonValueKind.Object)
 		{
-			// Prefer "Data" (Metrc), fall back to "data" if ever lower-cased
+			if (root.TryGetProperty("Meta", out var metaProp))
+				meta = metaProp;
+
 			if (root.TryGetProperty("Data", out var dataProp))
-				return dataProp;
+				return (dataProp, meta);
+
 			if (root.TryGetProperty("data", out var dataPropLower))
-				return dataPropLower;
+				return (dataPropLower, meta);
 		}
 
-		// Some endpoints already return an array or object directly
-		return root;
+		// Some endpoints already return an array/object at the root
+		return (root, meta);
+	}
+
+	private static PaginationInfo? ParsePagination(JsonElement root, JsonElement? meta)
+	{
+		// Try read from Meta first…
+		var source = meta ?? (root.ValueKind == JsonValueKind.Object ? root : (JsonElement?)null);
+		if (!source.HasValue || source.Value.ValueKind != JsonValueKind.Object) return null;
+
+		int? ReadInt(string name)
+		{
+			return source.Value.TryGetProperty(name, out var el) && el.ValueKind == JsonValueKind.Number
+				? el.TryGetInt32(out var i) ? i : (int?)null
+				: (int?)null;
+		}
+
+		// Support both locations (top-level or under "Meta") and both name variants often seen
+		var total = ReadInt("Total") ?? ReadInt("total");
+		var totalRecords = ReadInt("TotalRecords") ?? ReadInt("totalRecords");
+		var pageSize = ReadInt("PageSize") ?? ReadInt("pageSize");
+		var recordsOnPage = ReadInt("RecordsOnPage") ?? ReadInt("recordsOnPage");
+		var page = ReadInt("Page") ?? ReadInt("page");
+		var currentPage = ReadInt("CurrentPage") ?? ReadInt("currentPage");
+		var totalPages = ReadInt("TotalPages") ?? ReadInt("totalPages");
+
+		// If none present, return null
+		if (total is null && totalRecords is null && pageSize is null &&
+			recordsOnPage is null && page is null && currentPage is null && totalPages is null)
+			return null;
+
+		return new PaginationInfo(total, totalRecords, pageSize, recordsOnPage, page, currentPage, totalPages);
 	}
 
 	private static string? TryExtractErrorMessage(JsonElement root)
@@ -75,7 +112,6 @@ public static class MetrcEnvelopeFactory
 			if (root.TryGetProperty("Message", out var m) && m.ValueKind == JsonValueKind.String) return m.GetString();
 			if (root.TryGetProperty("message", out var mm) && mm.ValueKind == JsonValueKind.String) return mm.GetString();
 
-			// Common Metrc error shape: { "Errors": [ "...", { "Message": "..." }, ... ] }
 			if (root.TryGetProperty("Errors", out var errs) &&
 				errs.ValueKind == JsonValueKind.Array && errs.GetArrayLength() > 0)
 			{
