@@ -35,8 +35,9 @@ public sealed class MetrcPackagesService(IMetrcHttp http, IOptions<MetrcOptions>
 
 	public Task<ApiEnvelope> GetByLabelAsync(string label, CancellationToken ct)
 	{
-		var qs = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
-		var url = $"/packages/v2/{HttpUtility.UrlEncode(label)}?{qs}";
+		var url = QueryHelpers.AddQueryString($"/packages/v2/{Uri.EscapeDataString(label)}",
+			new Dictionary<string, string?> { ["licenseNumber"] = _opts.LicenseNumber });
+
 		return _http.GetAsync(url, ct);
 	}
 }
