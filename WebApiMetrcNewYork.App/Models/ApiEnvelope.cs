@@ -3,13 +3,13 @@
 namespace WebApiMetrcNewYork.App.Models;
 
 public sealed record ApiEnvelope(
-	string Status,            // "success" | "failure"
+	string Status,									// "success" | "failure"
 	int HttpCode,
 	string Message,
 	JsonElement? Data,
 	DateTimeOffset ReceivedAtUtc,
-	JsonElement? Meta,        // raw Meta (if present)
-	PaginationInfo? Pagination // parsed paging info (if present)
+	JsonElement? Meta,						// raw Meta (if present)
+	PaginationInfo? Pagination				// parsed paging info (if present)
 )
 {
 	public static ApiEnvelope Success(int httpCode, JsonElement data, JsonElement? meta, PaginationInfo? pagination) =>
