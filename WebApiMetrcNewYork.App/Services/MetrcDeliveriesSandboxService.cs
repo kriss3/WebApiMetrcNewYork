@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 using System.Net;
 using System.Text;
 using System.Web;
@@ -19,10 +20,25 @@ public sealed class MetrcDeliveriesSandboxService(
 	private readonly IMetrcHttp _http = http;
 	private readonly MetrcOptions _opts = opts.Value;
 
-	public Task<ApiEnvelope> GetActiveAsync(CancellationToken ct)
+	public Task<ApiEnvelope> GetActiveAsync(PackagesActiveQuery q, CancellationToken ct)
 	{
-		var query = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
-		var url = $"/sales/v2/deliveries/active?{query}";
+		var dict = new Dictionary<string, string?>
+		{
+			["licenseNumber"] = _opts.LicenseNumber
+		};
+
+		if (q.LastModifiedStart is { } s)
+			dict["lastModifiedStart"] = s.ToString("yyyy-MM-dd");
+		if (q.LastModifiedEnd is { } e)
+			dict["lastModifiedEnd"] = e.ToString("yyyy-MM-dd");
+
+		if (q.PageNumber is { } p) dict["pageNumber"] = p.ToString();
+		if (q.PageSize is { } z) dict["pageSize"] = z.ToString();
+
+		var url = QueryHelpers.AddQueryString("/sales/v2/deliveries/active", dict);
+
+		//var query = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
+		//var url = $"/sales/v2/deliveries/active?{query}";
 		return _http.GetAsync(url, ct);
 	}
 
