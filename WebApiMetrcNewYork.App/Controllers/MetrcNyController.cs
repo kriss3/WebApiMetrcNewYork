@@ -37,7 +37,7 @@ public sealed class MetrcNyController(
 	[HttpGet("deliveries/active")]
 	public async Task<IActionResult> GetActiveDeliveries([FromQuery] PackagesActiveQuery q, CancellationToken ct)
 	{
-		ApiEnvelope env = await _deliveriesSandbox.GetActiveAsync(ct);
+		ApiEnvelope env = await _deliveriesSandbox.GetActiveAsync(q, ct);
 		return StatusCode(env.HttpCode, env);
 	}
 
