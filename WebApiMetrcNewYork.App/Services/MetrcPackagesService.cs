@@ -21,9 +21,9 @@ public sealed class MetrcPackagesService(IMetrcHttp http, IOptions<MetrcOptions>
 			["licenseNumber"] = _opts.LicenseNumber
 		};
 
-		if (q.LastModifiedStartDate is { } s)
+		if (q.LastModifiedStart is { } s)
 			dict["lastModifiedStart"] = s.ToString("yyyy-MM-dd");
-		if (q.LastModifiedEndDate is { } e)
+		if (q.LastModifiedEnd is { } e)
 			dict["lastModifiedEnd"] = e.ToString("yyyy-MM-dd");
 
 		if (q.PageNumber is { } p) dict["pageNumber"] = p.ToString();
