@@ -99,6 +99,10 @@ Success/Failure:
   "data": { /* Metrc JSON */ }, // object or array; null on failure
   "receivedAt": "2025-11-01T01:23:45Z" // UTC timestamp from our API
 }
-```   
+```  
+
+### Updates:  
+- 2024-11-14: Initial version supporting Metrc NY deliveries endpoint.
+
 
 
