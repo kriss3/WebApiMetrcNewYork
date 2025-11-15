@@ -6,6 +6,7 @@
 @lastModifiedEnd = lastModifiedEnd= 2025-11-15
 @pageNumber = pageNumber=1
 @pageSize = pageSize=20
+@packageLabel = AAAFF03000002EA000000004
 
 GET {{WebApiMetrcNewYork.App_HostAddress}}/weatherforecast/
 Accept: application/json
@@ -20,7 +21,11 @@ Accept: application/json
 GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/packages/active?{{lastModifiedStart}}&{{lastModifiedEnd}}&{{pageNumber}}&{{pageSize}}
 Accept: application/json
 
-
+###
+# GET Delivery By Id
+@id = 1
+GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/packages/
+Accept: application/json
 
 ###
 # GET Delivery By Id
