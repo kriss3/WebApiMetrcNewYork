@@ -107,6 +107,8 @@ Success/Failure:
 - Both endpoints support query string parameters for filtering results.
 - Improved error handling and logging for better diagnostics.
 - Refactored codebase for enhanced maintainability and readability.
+- Delivery endpoint now supports pagination with page size and number parameters.
+- Pagination query string type is based on package type and that needs changing to something more generic.
 
 
 
