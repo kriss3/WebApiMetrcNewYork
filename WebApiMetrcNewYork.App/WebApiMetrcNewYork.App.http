@@ -17,7 +17,7 @@ Accept: application/json
 
 ### Metrc New York - Sandbox query via Local API.
 ###
-# GET Active Deliveries
+# GET Active Packages using Common Query Params.
 GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/packages/active?{{lastModifiedStart}}&{{lastModifiedEnd}}&{{pageNumber}}&{{pageSize}}
 Accept: application/json
 
