@@ -102,7 +102,11 @@ Success/Failure:
 ```  
 
 ### Updates:  
-- 2024-11-14: Initial version supporting Metrc NY deliveries endpoint.
+- 2024-11-14: Initial version supporting Metrc NY deliveries endpoint.  
+- Added support for Metrc Packages and Active Deliveries endpoints.
+- Both endpoints support query string parameters for filtering results.
+- Improved error handling and logging for better diagnostics.
+- 
 
 
 
