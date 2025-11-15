@@ -106,7 +106,7 @@ Success/Failure:
 - Added support for Metrc Packages and Active Deliveries endpoints.
 - Both endpoints support query string parameters for filtering results.
 - Improved error handling and logging for better diagnostics.
-- 
+- Refactored codebase for enhanced maintainability and readability.
 
 
 
