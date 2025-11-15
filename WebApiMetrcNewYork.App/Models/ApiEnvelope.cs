@@ -12,11 +12,27 @@ public sealed record ApiEnvelope(
 	PaginationInfo? Pagination				// parsed paging info (if present)
 )
 {
-	public static ApiEnvelope Success(int httpCode, JsonElement data, JsonElement? meta, PaginationInfo? pagination) =>
-		new("success", httpCode, "", data, DateTimeOffset.UtcNow, meta, pagination);
+	public static ApiEnvelope Success(
+		int httpCode,
+		JsonElement data,
+		JsonElement? meta, 
+		PaginationInfo? pagination) =>
+			new(
+				"success",
+				httpCode, 
+				"",
+				data,
+				DateTimeOffset.UtcNow, meta, pagination);
 
-	public static ApiEnvelope Failure(int httpCode, string message) =>
-		new("failure", httpCode, message ?? "", null, DateTimeOffset.UtcNow, null, null);
+	public static ApiEnvelope Failure(
+		int httpCode,
+		string message) =>
+			new(
+				"failure",
+				httpCode,
+				message ?? "", 
+				null, 
+				DateTimeOffset.UtcNow, null, null);
 }
 
 public static class MetrcEnvelopeFactory
