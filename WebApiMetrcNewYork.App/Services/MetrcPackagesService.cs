@@ -16,6 +16,8 @@ public sealed class MetrcPackagesService(IMetrcHttp http, IOptions<MetrcOptions>
 
 	public Task<ApiEnvelope> GetActiveAsync(CommonQueryParams query, CancellationToken ct)
 	{
+		// License Information comes from MetrcOptions.
+		// Query parameters come from CommonQueryParams.
 		var dict = new Dictionary<string, string?>
 		{
 			["licenseNumber"] = _opts.LicenseNumber
