@@ -2,6 +2,11 @@
 
 @WebApiMetrcNewYork.App_SecureHostAddress = https://localhost:7100
 
+@lastModifiedStart = lastModifiedStart=2025-11-07
+@lastModifiedEnd = lastModifiedEnd= 2025-11-15
+@pageNumber = pageNumber=1
+@pageSize = pageSize=20
+
 GET {{WebApiMetrcNewYork.App_HostAddress}}/weatherforecast/
 Accept: application/json
 
@@ -9,17 +14,13 @@ Accept: application/json
 GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/weatherforecast/
 Accept: application/json
 
-### Metrc NY — switch base here
-@baseUrl = https://<mock-subdomain>.mock.pstmn.io
-@license = 123-ABC
-# Optional: Use a BASIC token to mirror prod shape (mock won’t enforce it)
-@basic = {{BASIC_TOKEN_PLACEHOLDER}}
-
+### Metrc New York - Sandbox query via Local API.
 ###
 # GET Active Deliveries
-GET {{baseUrl}}/sales/v2/deliveries/active?licenseNumber={{license}}&pageNumber=1&pageSize=10
-Authorization: Basic {{basic}}
+GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/packages/active?{{lastModifiedStart}}&{{lastModifiedEnd}}&{{pageNumber}}&{{pageSize}}
 Accept: application/json
+
+
 
 ###
 # GET Delivery By Id
