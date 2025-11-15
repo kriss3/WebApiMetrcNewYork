@@ -22,9 +22,8 @@ GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/packages/active?{{l
 Accept: application/json
 
 ###
-# GET Delivery By Id
-@id = 1
-GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/packages/
+# GET Active Package By Label
+GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/packages/{{packageLabel}}
 Accept: application/json
 
 ###
