@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using System.Globalization;
-using System.Net;
-using System.Web;
 using WebApiMetrcNewYork.App.Client;
 using WebApiMetrcNewYork.App.Models;
 
