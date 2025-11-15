@@ -14,7 +14,7 @@ public sealed class MetrcPackagesService(IMetrcHttp http, IOptions<MetrcOptions>
 	private readonly IMetrcHttp _http = http;
 	private readonly MetrcOptions _opts = opts.Value;
 
-	public Task<ApiEnvelope> GetActiveAsync(PackagesActiveQuery q, CancellationToken ct)
+	public Task<ApiEnvelope> GetActiveAsync(CommonQueryParams q, CancellationToken ct)
 	{
 		var dict = new Dictionary<string, string?>
 		{

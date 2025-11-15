@@ -17,7 +17,7 @@ public sealed class MetrcNyController(
 
 	// GET /api/metrcny/packages/active?lastModifiedStart=...&lastModifiedEnd=...
 	[HttpGet("packages/active")]
-	public async Task<IActionResult> GetActivePackages([FromQuery] PackagesActiveQuery q, CancellationToken ct)
+	public async Task<IActionResult> GetActivePackages([FromQuery] CommonQueryParams q, CancellationToken ct)
 	{
 		var env = await _packages.GetActiveAsync(q, ct);
 		return StatusCode(env.HttpCode, env);
@@ -35,7 +35,7 @@ public sealed class MetrcNyController(
 
 	// GET /api/metrcny/deliveries/active
 	[HttpGet("deliveries/active")]
-	public async Task<IActionResult> GetActiveDeliveries([FromQuery] PackagesActiveQuery q, CancellationToken ct)
+	public async Task<IActionResult> GetActiveDeliveries([FromQuery] CommonQueryParams q, CancellationToken ct)
 	{
 		ApiEnvelope env = await _deliveriesSandbox.GetActiveAsync(q, ct);
 		return StatusCode(env.HttpCode, env);
