@@ -9,5 +9,6 @@ namespace WebApiMetrcNewYork.App.Services;
 public interface IMetrcDeliveriesSandboxService
 {
 	Task<ApiEnvelope> GetActiveAsync(CommonQueryParams q, CancellationToken ct);
+	Task<ApiEnvelope> GetActiveByIdAsync(int deliveryId, CancellationToken ct);
 	Task<ApiEnvelope> CreateAsync(object payload, CancellationToken ct);
 }
