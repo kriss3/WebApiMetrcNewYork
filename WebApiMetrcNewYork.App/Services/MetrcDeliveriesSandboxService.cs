@@ -36,9 +36,6 @@ public sealed class MetrcDeliveriesSandboxService(
 		if (q.PageSize is { } z) dict["pageSize"] = z.ToString();
 
 		var url = QueryHelpers.AddQueryString("/sales/v2/deliveries/active", dict);
-
-		//var query = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
-		//var url = $"/sales/v2/deliveries/active?{query}";
 		return _http.GetAsync(url, ct);
 	}
 
