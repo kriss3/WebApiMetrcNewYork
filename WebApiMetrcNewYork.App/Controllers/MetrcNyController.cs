@@ -40,6 +40,14 @@ public sealed class MetrcNyController(
 		return StatusCode(env.HttpCode, env);
 	}
 
+	// GET /api/metrcny/packages/{label}
+	[HttpGet("deliveries/{deliveryId}")]
+	public async Task<IActionResult> GetActiveDeliveryById([FromRoute] int deliveryId, CancellationToken ct)
+	{
+		ApiEnvelope env = await _deliveriesSandbox.GetActiveByIdAsync(deliveryId, ct);
+		return StatusCode(env.HttpCode, env);
+	}
+
 	// POST /api/metrcny/deliveries
 	[HttpPost("deliveries")]
 	public async Task<IActionResult> CreateDelivery([FromBody] object payload, CancellationToken ct)
