@@ -1,5 +1,4 @@
-﻿using System.Net;
-using WebApiMetrcNewYork.App.Models;
+﻿using WebApiMetrcNewYork.App.Models;
 
 namespace WebApiMetrcNewYork.App.Services;
 
