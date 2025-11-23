@@ -39,7 +39,16 @@ public sealed class MetrcDeliveriesSandboxService(
 
 	public Task<ApiEnvelope> GetActiveByIdAsync(int deliveryId, CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		if(deliveryId <= 0)
+			throw new ArgumentOutOfRangeException(nameof(deliveryId), "Delivery id must be positive.");
+
+		var url = QueryHelpers.AddQueryString($"/sales/v2/deliveries/{deliveryId}",
+			new Dictionary<string, string?>
+			{
+				["licenseNumber"] = _opts.LicenseNumber
+			});
+
+		return _http.GetAsync(url, ct);
 	}
 
 	public Task<ApiEnvelope> CreateAsync(object payload, CancellationToken ct)
