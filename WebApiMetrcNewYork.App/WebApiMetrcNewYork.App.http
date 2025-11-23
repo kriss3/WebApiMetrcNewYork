@@ -7,6 +7,7 @@
 @pageNumber = pageNumber=1
 @pageSize = pageSize=20
 @packageLabel = AAAFF03000002EA000000004
+@id = 21
 
 GET {{WebApiMetrcNewYork.App_HostAddress}}/weatherforecast/
 Accept: application/json
@@ -33,8 +34,7 @@ Accept: application/json
 
 ###
 # GET Delivery By Id
-@id = 1
-GET {{baseUrl}}/sales/v2/deliveries/{{id}}?licenseNumber={{license}}
+GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/deliveries/{{id}}?licenseNumber={{license}}
 Authorization: Basic {{basic}}
 Accept: application/json
 
