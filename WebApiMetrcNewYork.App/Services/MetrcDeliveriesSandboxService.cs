@@ -37,6 +37,11 @@ public sealed class MetrcDeliveriesSandboxService(
 		return _http.GetAsync(url, ct);
 	}
 
+	public Task<ApiEnvelope> GetActiveByIdAsync(int deliveryId, CancellationToken ct)
+	{
+		throw new NotImplementedException();
+	}
+
 	public Task<ApiEnvelope> CreateAsync(object payload, CancellationToken ct)
 	{
 		var query = $"licenseNumber={HttpUtility.UrlEncode(_opts.LicenseNumber)}";
