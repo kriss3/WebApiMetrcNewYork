@@ -34,8 +34,7 @@ Accept: application/json
 
 ###
 # GET Delivery By Id
-GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/deliveries/{{id}}?licenseNumber={{license}}
-Authorization: Basic {{basic}}
+GET {{WebApiMetrcNewYork.App_SecureHostAddress}}/api/metrcny/deliveries/{{id}}
 Accept: application/json
 
 ###
