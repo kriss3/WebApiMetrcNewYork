@@ -19,6 +19,15 @@ public sealed class MetrcWebHooksService(
 
     public Task<ApiEnvelope> SubscribeToPackageWebhooksAsync(CancellationToken ct)
     {
-        throw new NotImplementedException();
+		var client = _httpClientFactory.CreateClient("MetrcWebHooks");
+
+		// Now, this is important. This must match the inbound controller route
+		// This is a callback url Metrc will send updates on packages.
+		var receiverUrl =
+			$"{_opts.WebhookReceiverBaseUrl.TrimEnd('/')}/api/metrc-webhooks/packages/inbound";
+
+
+
+		throw new NotImplementedException();
     }
 }
