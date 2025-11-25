@@ -2,7 +2,7 @@
 
 namespace WebApiMetrcNewYork.App.Services;
 
-public sealed class MetrcWebhooksService : IMetrcWebhooksService
+public sealed class MetrcWebHooksService : IMetrcWebHooksService
 {
     public Task<ApiEnvelope> GetSubscriptionsAsync(CancellationToken ct)
     {
