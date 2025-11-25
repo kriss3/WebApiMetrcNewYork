@@ -17,7 +17,7 @@ public sealed class MetrcWebHooksService(
 		return await MetrcEnvelopeFactory.FromResponseAsync(resp, ct);
 	}
 
-    public Task<ApiEnvelope> SubscribeToPackageWebhooksAsync(CancellationToken ct)
+    public async Task<ApiEnvelope> SubscribeToPackageWebhooksAsync(CancellationToken ct)
     {
 		var client = _httpClientFactory.CreateClient("MetrcWebHooks");
 
@@ -47,6 +47,9 @@ public sealed class MetrcWebHooksService(
                 facilityLicenseNumbers = new[] { _opts.LicenseNumber }
 			}
 		};
+
+		using var resp = await client.PutAsJsonAsync("/webhooks/v2", body, ct);
+		return await MetrcEnvelopeFactory.FromResponseAsync(resp, ct);
 
 
 		throw new NotImplementedException();
