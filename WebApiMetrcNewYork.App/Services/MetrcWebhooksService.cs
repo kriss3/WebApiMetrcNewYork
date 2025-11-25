@@ -50,8 +50,5 @@ public sealed class MetrcWebHooksService(
 
 		using var resp = await client.PutAsJsonAsync("/webhooks/v2", body, ct);
 		return await MetrcEnvelopeFactory.FromResponseAsync(resp, ct);
-
-
-		throw new NotImplementedException();
     }
 }
