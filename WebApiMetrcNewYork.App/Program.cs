@@ -57,6 +57,7 @@ public class Program
 		builder.Services.AddScoped<IMetrcHttp, MetrcHttp>();
 		builder.Services.AddScoped<IMetrcPackagesService, MetrcPackagesService>();
 		builder.Services.AddScoped<IMetrcDeliveriesSandboxService, MetrcDeliveriesSandboxService>();
+		builder.Services.AddScoped<IMetrcWebHooksService, MetrcWebHooksService>();
 
 		builder.Services.AddControllers();
         builder.Services.AddOpenApi();
