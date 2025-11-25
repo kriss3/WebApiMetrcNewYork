@@ -8,4 +8,5 @@ public sealed class MetrcOptions
 	public string VendorApiKey { get; init; } = default!;
 	public string UserApiKey { get; init; } = default!;
 	public string LicenseNumber { get; init; } = default!;
+	public string WebhookReceiverBaseUrl { get; init; } = "https://services-connect.metrc.com/";
 }
