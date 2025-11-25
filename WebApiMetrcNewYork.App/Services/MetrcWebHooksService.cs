@@ -26,6 +26,27 @@ public sealed class MetrcWebHooksService(
 		var receiverUrl =
 			$"{_opts.WebhookReceiverBaseUrl.TrimEnd('/')}/api/metrc-webhooks/packages/inbound";
 
+		var body = new[]
+		{
+			new
+			{
+				objectType = "Package",
+				url = receiverUrl,
+				verb = "POST",
+				status = "Active",
+
+                // From your existing secrets.json:
+                userApiKey = _opts.UserApiKey,
+				tpiApiKey = _opts.VendorApiKey,          // integrator key
+
+                serverPublicKeyFingerprint = (string?)null,
+				template = "{\"data\":#DATA#, \"datacount\":#DATACOUNT#}",
+				errorResponseJsonTemplate = "{\"error\": #ERRORMESSAGE#, \"errorcode\": #ERRORCODE#}",
+
+                // licenseNumber doubles as facility license number here
+                facilityLicenseNumbers = new[] { _opts.LicenseNumber }
+			}
+		};
 
 
 		throw new NotImplementedException();
