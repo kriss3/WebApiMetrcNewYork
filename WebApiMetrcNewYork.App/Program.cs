@@ -28,7 +28,6 @@ public class Program
 
 		builder.Services.AddTransient<MetrcAuthHandler>();
 
-
 		// Named client; BaseAddress is optional since I have absolute URLs.
 		builder.Services.AddHttpClient("MetrcNY", (sp, http) =>
 		{
@@ -36,6 +35,22 @@ public class Program
 			http.BaseAddress = new Uri(opts.BaseUrl);
 			http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}).AddHttpMessageHandler<MetrcAuthHandler>();
+
+		// Named client for Metrc WebHooks:
+		builder.Services.AddHttpClient("MetrcWebHooks", (sp, http) =>
+		{
+			var opts = sp.GetRequiredService<IOptions<MetrcOptions>>().Value;
+
+			// Metrc Connect base URL (different from sandbox base URL)
+			http.BaseAddress = new Uri(opts.WebhookReceiverBaseUrl);
+
+			// Metrc Connect uses X-Metrc-Auth header with your integrator / API key.
+			// In your case, that's the same as VendorApiKey.
+			http.DefaultRequestHeaders.Add("X-Metrc-Auth", opts.VendorApiKey);
+
+			http.DefaultRequestHeaders.Accept.Add(
+				new MediaTypeWithQualityHeaderValue("application/json"));
+		});
 
 		//builder.Services.AddScoped<IMetrcDeliveriesService, MetrcDeliveriesService>();
 		// 4) DI: client abstraction + services
