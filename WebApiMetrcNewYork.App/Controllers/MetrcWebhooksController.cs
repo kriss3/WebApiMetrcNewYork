@@ -17,6 +17,8 @@ public class MetrcWebhooksController(IMetrcWebHooksService webhooksService) : Co
 	// For production, persist these via EF Core or queue them to Service Bus.
 	private static readonly ConcurrentQueue<JsonElement> _receivedPackageEvents = new();
 
+	// POST /api/metrc-webhooks/packages/subscribe
+	// Registers a Package webhook subscription via Metrc Connect.
 	[HttpPost("packages/subscribe")]
 	public async Task<IActionResult> SubscribeToPackages(CancellationToken ct) 
 	{
@@ -24,10 +26,21 @@ public class MetrcWebhooksController(IMetrcWebHooksService webhooksService) : Co
 		return StatusCode(env.HttpCode, env);
 	}
 
+	// GET /api/metrc-webhooks/subscriptions
+	// Optional helper to see what Metrc thinks the subscriptions are.
 	[HttpGet("subscriptions")]
 	public async Task<IActionResult> GetSubscriptions(CancellationToken ct) 
 	{
 		ApiEnvelope env = await _webhooksService.GetSubscriptionsAsync(ct);
 		return StatusCode(env.HttpCode, env);
+	}
+
+	// POST /api/metrc-webhooks/packages/inbound
+	// This is the callback URL Metrc Connect will call when Packages change.
+	// It must match the 'url' field in the subscription body.
+	[HttpPost("packages/inbound")]
+	public IActionResult ReceivePackageWebhook([FromBody] JsonElement body) 
+	{
+		throw new NotImplementedException();
 	}
 }
