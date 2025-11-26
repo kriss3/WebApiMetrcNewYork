@@ -41,6 +41,17 @@ public class MetrcWebhooksController(IMetrcWebHooksService webhooksService) : Co
 	[HttpPost("packages/inbound")]
 	public IActionResult ReceivePackageWebhook([FromBody] JsonElement body) 
 	{
-		throw new NotImplementedException();
+		_receivedPackageEvents.Enqueue(body);
+
+		var dataCount = body.TryGetProperty("datacount", out var dc)
+			? dc.GetInt32()
+			: (int?)null;
+
+		return Ok(new
+		{
+			message = "Webhook received",
+			receivedAtUtc = DateTimeOffset.UtcNow,
+			dataCount
+		});
 	}
 }
