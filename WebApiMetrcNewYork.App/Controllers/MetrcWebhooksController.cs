@@ -27,6 +27,7 @@ public class MetrcWebhooksController(IMetrcWebHooksService webhooksService) : Co
 	[HttpGet("subscriptions")]
 	public async Task<IActionResult> GetSubscriptions(CancellationToken ct) 
 	{
-		throw new NotImplementedException();
+		ApiEnvelope env = await _webhooksService.GetSubscriptionsAsync(ct);
+		return StatusCode(env.HttpCode, env);
 	}
 }
