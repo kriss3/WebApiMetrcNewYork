@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Concurrent;
 using System.Text.Json;
+using WebApiMetrcNewYork.App.Models;
 using WebApiMetrcNewYork.App.Services;
 
 namespace WebApiMetrcNewYork.App.Controllers;
@@ -19,6 +20,7 @@ public class MetrcWebhooksController(IMetrcWebHooksService webhooksService) : Co
 	[HttpPost("packages/subscribe")]
 	public async Task<IActionResult> SubscribeToPackages(CancellationToken ct) 
 	{
-		throw new NotImplementedException();
+		ApiEnvelope env = await _webhooksService.SubscribeToPackageWebhooksAsync(ct);
+		return StatusCode(env.HttpCode, env);
 	}
 }
